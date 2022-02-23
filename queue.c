@@ -30,7 +30,7 @@ void q_free(struct list_head *l)
     if (!l)
         return;
 
-    struct list_head *node = NULL, *safe = NULL;
+    element_t *node = NULL, *safe = NULL;
     list_for_each_entry_safe (node, safe, l, list)
         q_release_element(node);
     free(l);
