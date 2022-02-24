@@ -83,6 +83,14 @@ bool q_insert_head(struct list_head *head, char *s)
  */
 bool q_insert_tail(struct list_head *head, char *s)
 {
+    if (!head)
+        return false;
+
+    element_t *ele = new_element(s);
+    if (!ele)
+        return false;
+
+    list_add_tail(&ele->list, head);
     return true;
 }
 
