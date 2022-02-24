@@ -67,6 +67,9 @@ bool q_insert_head(struct list_head *head, char *s)
         return false;
 
     element_t *ele = new_element(s);
+    if (!ele)
+        return false;
+
     list_add(&ele->list, head);
     return true;
 }
