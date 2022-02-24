@@ -110,7 +110,18 @@ bool q_insert_tail(struct list_head *head, char *s)
  */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    return NULL;
+    if (!q_size(head))
+        return NULL;
+
+    struct list_head *next = head->next;
+    element_t *ret = container_of(next, element_t, list);
+    if (sp) {
+        len = strlen(sp) > bufsize - 1 ? bufsize - 1 : strlen(sp);
+        strncpy(sp, ret->value, len);
+        sp[len - 1] = '\0';
+    }
+    list_del(next);
+    return ret;
 }
 
 /*
