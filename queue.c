@@ -226,14 +226,20 @@ void q_swap(struct list_head *head)
     if (list_is_singular(head))
         return;
 
-    for (struct list_head *front = head->next, *back = head->next->next;
-         front != head && back != head;
-         front = head->next, back = head->next->next) {
-        list_del(back);
-        list_add_tail(back, head);
+    struct list_head *first = head->next, *second = head->next->next;
+    struct list_head *front = first, *back = first->next;
+    do {
+        printf("h");
+        if (front == first || back != second) {
+            printf("a");
+            list_del(back);
+            list_add_tail(back, head);
+        }
         list_del(front);
         list_add_tail(front, head);
-    }
+        front = head->next;
+        back = front->next;
+    } while (front != first && back != first);
 }
 
 /*
