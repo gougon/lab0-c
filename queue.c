@@ -206,14 +206,26 @@ bool q_delete_dup(struct list_head *head)
     if (list_is_singular(head))
         return true;
 
-    element_t *prev = NULL, *cur = NULL;
-    list_for_each_entry_safe (prev, cur, head, list) {
-        char *pval = prev->value;
-        char *cval = cur->value;
-        int plen = strlen(pval), clen = strlen(cval);
-        if (plen == clen && !strncmp(pval, cval, (size_t) plen))
-            q_release_element(remove_element(&prev->list, NULL, 0));
+    bool is_dup = false;
+    struct list_head *prev = head->next, *cur;
+    for (cur = prev->next; cur != head; cur = cur->next) {
+        char *pval = list_entry(prev, element_t, list)->value;
+        char *cval = list_entry(cur, element_t, list)->value;
+        size_t plen = strlen(pval), clen = strlen(cval);
+        if (plen == clen && !strncmp(pval, cval, plen)) {
+            q_release_element(remove_element(cur, NULL, 0));
+            is_dup = true;
+            cur = prev;
+        } else {
+            if (is_dup) {
+                q_release_element(remove_element(prev, NULL, 0));
+                is_dup = false;
+            }
+            prev = cur;
+        }
     }
+    if (is_dup)
+        q_release_element(remove_element(prev, NULL, 0));
     return true;
 }
 
