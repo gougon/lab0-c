@@ -96,11 +96,12 @@ bool q_insert_tail(struct list_head *head, char *s)
 
 element_t *remove_element(struct list_head *pos, char *sp, size_t bufsize)
 {
-    element_t *target = container_of(pos, element_t, list);
-    list_del(pos);
+    element_t *target = list_entry(pos, element_t, list);
+    list_del_init(pos);
 
     if (sp) {
-        int len = strlen(sp) > bufsize - 1 ? bufsize - 1 : strlen(sp);
+        size_t len = strlen(target->value) + 1;
+        len = len > bufsize ? bufsize : len;
         strncpy(sp, target->value, len);
         sp[len - 1] = '\0';
     }
@@ -253,8 +254,8 @@ struct list_head *merge_two_lists(struct list_head *l, struct list_head *r)
 {
     struct list_head *head = NULL, **ptr = &head, *pprev = NULL, **node = NULL;
     for (; l && r; *node = (*node)->next) {
-        char *lval = container_of(l, element_t, list)->value;
-        char *rval = container_of(r, element_t, list)->value;
+        char *lval = list_entry(l, element_t, list)->value;
+        char *rval = list_entry(r, element_t, list)->value;
         int llen = strlen(lval), rlen = strlen(rval);
         int n = llen > rlen ? llen : rlen;
         node = (strncmp(lval, rval, n) > 0) ? &r : &l;
