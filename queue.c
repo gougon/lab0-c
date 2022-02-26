@@ -123,8 +123,8 @@ element_t *remove_element(struct list_head *pos, char *sp, size_t bufsize)
  */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    return head && list_empty(head) ? remove_element(head->next, sp, bufsize)
-                                    : NULL;
+    return head && !list_empty(head) ? remove_element(head->next, sp, bufsize)
+                                     : NULL;
 }
 
 /*
@@ -133,8 +133,8 @@ element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
  */
 element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 {
-    return head && list_empty(head) ? remove_element(head->prev, sp, bufsize)
-                                    : NULL;
+    return head && !list_empty(head) ? remove_element(head->prev, sp, bufsize)
+                                     : NULL;
 }
 
 /*
