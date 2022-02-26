@@ -123,7 +123,8 @@ element_t *remove_element(struct list_head *pos, char *sp, size_t bufsize)
  */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    return q_size(head) ? remove_element(head->next, sp, bufsize) : NULL;
+    return head && list_empty(head) ? remove_element(head->next, sp, bufsize)
+                                    : NULL;
 }
 
 /*
@@ -132,7 +133,8 @@ element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
  */
 element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 {
-    return q_size(head) ? remove_element(head->prev, sp, bufsize) : NULL;
+    return head && list_empty(head) ? remove_element(head->prev, sp, bufsize)
+                                    : NULL;
 }
 
 /*
@@ -173,7 +175,7 @@ int q_size(struct list_head *head)
 bool q_delete_mid(struct list_head *head)
 {
     // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
-    if (!q_size(head))
+    if (!head || list_empty(head))
         return false;
 
     struct list_head *fwd = head->next, *bwd = head->prev;
@@ -200,7 +202,7 @@ bool q_delete_dup(struct list_head *head)
     if (!head)
         return false;
 
-    if (q_size(head) < 2)
+    if (list_is_singular(head))
         return true;
 
     element_t *prev = NULL, *cur = NULL;
@@ -220,7 +222,7 @@ bool q_delete_dup(struct list_head *head)
 void q_swap(struct list_head *head)
 {
     // https://leetcode.com/problems/swap-nodes-in-pairs/
-    if (q_size(head) < 2)
+    if (list_is_singular(head))
         return;
 
     for (struct list_head *front = head->next, *back = head->next->next;
