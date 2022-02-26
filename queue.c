@@ -229,9 +229,7 @@ void q_swap(struct list_head *head)
     struct list_head *first = head->next, *second = head->next->next;
     struct list_head *front = first, *back = first->next;
     do {
-        printf("h");
         if (front == first || back != second) {
-            printf("a");
             list_del(back);
             list_add_tail(back, head);
         }
@@ -262,9 +260,7 @@ struct list_head *merge_two_lists(struct list_head *l, struct list_head *r)
     for (; l && r; *node = (*node)->next) {
         char *lval = list_entry(l, element_t, list)->value;
         char *rval = list_entry(r, element_t, list)->value;
-        int llen = strlen(lval), rlen = strlen(rval);
-        int n = llen > rlen ? llen : rlen;
-        node = (strncmp(lval, rval, n) > 0) ? &r : &l;
+        node = (strcasecmp(lval, rval) > 0) ? &r : &l;
         *ptr = *node;
         (*ptr)->prev = pprev;
         ptr = &(*ptr)->next;
