@@ -259,6 +259,9 @@ void q_swap(struct list_head *head)
  */
 void q_reverse(struct list_head *head)
 {
+    if (!head || list_empty(head))
+        return;
+
     struct list_head *tail = head->prev;
     for (struct list_head *cur = tail->prev; cur != head; cur = tail->prev)
         list_move_tail(cur, head);
