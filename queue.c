@@ -247,9 +247,66 @@ void q_reverse(struct list_head *head)
         list_move_tail(cur, head);
 }
 
+struct list_head *merge_two_lists(struct list_head *l, struct list_head *r)
+{
+    struct list_head *head = NULL, **ptr = &head, *pprev = NULL, **node = NULL;
+    for (; l && r; *node = (*node)->next) {
+        char *lval = container_of(l, element_t, list)->value;
+        char *rval = container_of(r, element_t, list)->value;
+        int llen = strlen(lval), rlen = strlen(rval);
+        int n = llen > rlen ? llen : rlen;
+        node = (strncmp(lval, rval, n) > 0) ? &r : &l;
+        *ptr = *node;
+        (*ptr)->prev = pprev;
+        ptr = &(*ptr)->next;
+        pprev = *node;
+    }
+    *ptr = l ? l : r;
+    (*ptr)->prev = pprev;
+    return head;
+}
+
+struct list_head *mergesort_list(struct list_head *node)
+{
+    if (!node || !node->next)
+        return node;
+
+    struct list_head *slow = node;
+    for (struct list_head *fast = node->next; fast && fast->next;
+         fast = fast->next->next)
+        slow = slow->next;
+    struct list_head *mid = slow->next;
+    slow->next = NULL;
+    mid->prev = NULL;
+
+    struct list_head *left = mergesort_list(node);
+    struct list_head *right = mergesort_list(mid);
+    return merge_two_lists(left, right);
+}
+
 /*
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
-void q_sort(struct list_head *head) {}
+void q_sort(struct list_head *head)
+{
+    if (!head || !head->next)
+        return;
+
+    // Delete circular & Take out head
+    struct list_head *first = head->next, *last = head->prev;
+    last->next = NULL;
+    head->prev = NULL;
+    first->prev = NULL;
+    head->next = NULL;
+
+    first = mergesort_list(first);
+    last = first;
+    while (last->next)
+        last = last->next;
+    head->next = first;
+    head->prev = last;
+    first->prev = head;
+    last->next = head;
+}
