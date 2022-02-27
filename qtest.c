@@ -861,8 +861,33 @@ static bool do_show(int argc, char *argv[])
     return show_queue(0);
 }
 
+static bool do_shuffle(int argc, char *argv[])
+{
+    if (argc != 1) {
+        report(1, "%s takes no arguments", argv[0]);
+        return false;
+    }
+
+    if (!l_meta.l)
+        report(3, "Warning: Try to access null queue");
+    error_check();
+
+    int i = l_meta.size;
+
+    for (struct list_head *ptr = l_meta.l, *swap; --i; ptr = swap) {
+        swap = l_meta.l->next;
+        for (int j = 0; j < rand() % (i + 1); j++)
+            swap = swap->next;
+        list_move_tail(ptr->prev, swap);
+        list_move_tail(swap, ptr);
+    }
+    show_queue(3);
+    return true;
+}
+
 static void console_init()
 {
+    ADD_COMMAND(shuffle, "                | Shuffle nodes in queue");
     ADD_COMMAND(new, "                | Create new queue");
     ADD_COMMAND(free, "                | Delete queue");
     ADD_COMMAND(
